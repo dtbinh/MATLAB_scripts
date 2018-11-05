@@ -8,6 +8,14 @@ else
     test = displayMenu();
     fprintf (" You chose test %d\n", test);
 
+    % Run the selected test
+    switch test
+        case 0
+            runReadOnly();
+        otherwise
+            disp('Unimplmented test');
+    end;
+
     % Close COM ports
     calllib('libfx_plan_stack', 'fxClose', 1);
 
@@ -28,12 +36,6 @@ function test = displayMenu()
     disp( "6) Two Device Leader-Follower");
 
     test = input("Choose the test to run: ");
-    switch test
-        case 0
-            runReadOnly();
-        otherwise
-            disp('Unimplmented test');
-    end;
 end
 
 function ports = readConfig()
