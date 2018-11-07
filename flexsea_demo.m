@@ -8,6 +8,9 @@ clear all;
 deviceIds = [ -99, -99, -99 ];
 ports = cellstr([ '', '', '' ]);
 
+%shouldQuit = false;
+%shouldQuit = onCleanup( @() signalHander(shouldQuit) ) 
+
 % Check to see what COM ports to use
 ports = readConfig();
 
@@ -30,8 +33,10 @@ end
 
 % Close COM ports
 for i = 1:length( ports )
-    fprintf("ZZZ Closing port %s\n", ports{i});
-    calllib('libfx_plan_stack', 'fxClose', i);
+    fprintf("Closing com ports\n");
+    if( ports{i} )
+        calllib('libfx_plan_stack', 'fxClose', i);
+    end
 end
 
 if libisloaded( 'libfx_plan_stack' )
@@ -44,6 +49,7 @@ unloadlibrary 'libfx_plan_stack'
 function test = displayMenu()
 % Display the test selection menu and wait for user to select one
 
+    clc;
     disp( "0) Read only");
     disp( "1) Open speed");
     disp( "2) Current Control");
@@ -53,6 +59,7 @@ function test = displayMenu()
     disp( "6) Two Device Leader-Follower");
 
     test = input("Choose the test to run: ");
+    clc;
 end
 
 function [ retCode, deviceIds] = loadAndGetDevice( ports )
@@ -68,10 +75,9 @@ function [ retCode, deviceIds] = loadAndGetDevice( ports )
     end
     
     % Add relative path to library/header file
-    disp('adding paths');
+    disp('Loading library');
     addpath( '..\fx_plan_stack\lib64');
     addpath( '..\fx_plan_stack\include\flexseastack');
-    disp('Loading library');
     loadlibrary('libfx_plan_stack', 'com_wrapper');
     if libisloaded( 'libfx_plan_stack' )
         % Initialize the FX environment
@@ -79,19 +85,21 @@ function [ retCode, deviceIds] = loadAndGetDevice( ports )
     
         % We need to loop until all of the ports are open
         for i = 1:length( ports )
-            % Now open the COM port
-            fprintf("Opening port %s\n", ports{i});
-            calllib('libfx_plan_stack', 'fxOpen', ports{i}, i);
-            pause(1);
-            retCode = false;
-            iterCount = 10;
-            while ~retCode && iterCount > 0
+            if( ports{i} )
+                % Now open the COM port
+                fprintf("Opening port [%s]\n", ports{i});
+                calllib('libfx_plan_stack', 'fxOpen', ports{i}, i);
                 pause(1);
-                retCode = calllib('libfx_plan_stack', 'fxIsOpen', i);
-                if( ~retCode )
-                    fprintf("Could not open port %s\n", ports{i});
+                retCode = false;
+                iterCount = 10;
+                while ~retCode && iterCount > 0
+                    pause(1);
+                    retCode = calllib('libfx_plan_stack', 'fxIsOpen', i);
+                    if( ~retCode )
+                        fprintf("Could not open port %s\n", ports{i});
+                    end
+                    iterCount = iterCount - 1;
                 end
-                iterCount = iterCount - 1;
             end
         end
         
@@ -107,3 +115,8 @@ function [ retCode, deviceIds] = loadAndGetDevice( ports )
         retCode = true;
     end
 end
+
+%function shouldQuit = signalHander( ShouldQuit )
+%    disp("ZZZ CTRL-C Caught\n");
+%    shouldQuit = true;
+%end

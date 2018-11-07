@@ -50,31 +50,44 @@ varsToStream = [ 		...
     FX_RIGID_GEN_VAR_9,     ...
 	FX_RIGID_MOT_VOLT		...
 ];
+
+outVars = [ 99, 99, 99, 99, 99, 99, 99, 99, 99, 99 ];
     % Select the variables to stream
-    calllib(libHandle, 'fxSetStreamVariables', deviceId,  varsToStream, 10 );
+    [retCode, outVars ] = calllib(libHandle, 'fxSetStreamVariables', deviceId,  varsToStream, 10 );
     
     % Start streaming
     retCode = calllib(libHandle, 'fxStartStreaming', deviceId, 100, false, 0 );
     if( ~retCode)
         fprintf("Couldn't start streaming...\n");
     else
-        while true
+
+        for count = 1:10
             pause(1);
+            %zzzclc;
+            fprintf("Streaming data from device %d\n", deviceId );
             printDevice( libHandle, deviceId, varsToStream, labels, 10);
-            count = count -1;
         end
     end
+    calllib(libHandle, 'fxStopStreaming', deviceId);
 end
 
 function printDevice( libHandle, devId, vars, labels, n)
 % Read the variables from the device and print them
     success = [ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
-    
+    retData = [ -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 ];
+
+    % Read the values from the device
     [ ptr, retData, success] = calllib(libHandle, 'fxReadDevice', devId, vars, success, n);
+
+    % Jump through some hoops to get access to the returned data
+    ptrindex = libpointer('int32Ptr', zeros(1:10, 'int32'));
+    ptrindex = ptr;
+    setdatatype(ptrindex, 'int32Ptr', 1, 10);
     
+    % Print the data or failure indication
     for i = 1:length( vars )
         if( success(i) )
-            fprintf("\t%14s\t%d\n", labels{i}, vars(i) );
+            fprintf("\t%14s\t%d\n", labels{i}, ptrindex.value(i) );
         else
             fprintf("\t%14s\t------\n", labels{i} );
         end
