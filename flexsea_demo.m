@@ -37,6 +37,7 @@ end
 fprintf("Closing com ports\n");
 for i = 1:length( ports )
     if( ports{i} )
+        %fprintf("zzz Closing port %s\n", ports{i});
         calllib('libfx_plan_stack', 'fxClose', i);
     end
 end
@@ -89,7 +90,7 @@ function [ retCode, deviceIds] = loadAndGetDevice( ports )
         for i = 1:length( ports )
             if( ports{i} )
                 % Now open the COM port
-                fprintf("Opening port [%s]\n", ports{i});
+                fprintf("Opening port %s\n", ports{i});
                 calllib('libfx_plan_stack', 'fxOpen', ports{i}, i);
                 pause(1);
                 retCode = false;
