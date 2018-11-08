@@ -26,14 +26,16 @@ else
     switch test
         case 0
             runReadOnly( 'libfx_plan_stack', deviceIds( 1 ) );
+        case 6
+            RunLeaderFollower( 'libfx_plan_stack', deviceIds );
         otherwise
             disp('Unimplmented test');
     end
 end
 
 % Close COM ports
+fprintf("Closing com ports\n");
 for i = 1:length( ports )
-    fprintf("Closing com ports\n");
     if( ports{i} )
         calllib('libfx_plan_stack', 'fxClose', i);
     end
