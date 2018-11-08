@@ -102,9 +102,9 @@ varsToStream = [ 		...
             calllib(libHandle, 'setMotorCurrent', deviceIds(1), 0);
 
             % set position controller for second device
-            calllib(libHandle, 'setPosition', deviceIds(2), initialAngle1);
+            calllib(libHandle, 'setPosition', deviceIds(2), initialAngle2);
             calllib(libHandle, 'setControlMode', deviceIds(2), CTRL_POSITION);
-            calllib(libHandle, 'setPosition', deviceIds(2), initialAngle1);
+            calllib(libHandle, 'setPosition', deviceIds(2), initialAngle2);
             calllib(libHandle, 'setZGains', deviceIds(2), 50, 3, 0, 0);
 
             %timeoutCount = 100;
