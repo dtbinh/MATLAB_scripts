@@ -14,7 +14,7 @@ function printDevice( libHandle, devId, vars, labels, n)
     
     % Print the data or failure indication
     for i = 1:length( vars )
-        if( success(i) )
+        if( success(i) ~= -1)
             fprintf("\t%14s\t%d\n", labels{i}, ptrindex.value(i) );
         else
             fprintf("\t%14s\t------\n", labels{i} );
