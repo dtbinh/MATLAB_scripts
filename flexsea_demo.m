@@ -34,6 +34,8 @@ else
             runPositionControl( 'libfx_plan_stack', deviceIds( 1 ) );
         case 4
             runFindPoles( 'libfx_plan_stack', deviceIds(1));
+        case 5
+            runTwoDevicePosition( 'libfx_plan_stack', deviceIds);
         case 6
             RunLeaderFollower( 'libfx_plan_stack', deviceIds );
         otherwise
@@ -45,7 +47,6 @@ end
 fprintf("Closing com ports\n");
 for i = 1:length( ports )
     if( ports{i} )
-        %fprintf("zzz Closing port %s\n", ports{i});
         calllib('libfx_plan_stack', 'fxClose', i);
     end
 end
@@ -118,9 +119,7 @@ function [ retCode, deviceIds] = loadAndGetDevice( ports )
         deviceIds = [ -3, -2, -2 ];
         deviceIds = calllib('libfx_plan_stack', 'fxGetDeviceIds', deviceIds, 3);
         if( deviceIds( 1 ) == -1)
-            fprintf("zzz got no device ids %d\n", deviceIds);
-        else
-            fprintf("ZZZ GOT DEVICE IDS %d\n", deviceIds);
+            fprintf("Got no device ids\n");
         end
     else
         retCode = true;
@@ -131,6 +130,6 @@ function runFindPoles( libHandle, devId)
     calllib('libfx_plan_stack', 'findPoles', devId, true);
 end
 %function shouldQuit = signalHander( ShouldQuit )
-%    disp("ZZZ CTRL-C Caught\n");
+%    disp("CTRL-C Caught\n");
 %    shouldQuit = true;
 %end

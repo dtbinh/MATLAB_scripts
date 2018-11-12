@@ -52,16 +52,36 @@ varsToStream = [ 		...
             calllib(libHandle, 'setMotorCurrent', devId, (holdCurrent * (n - i) / n));
         end
         
-        % Wait for moptor to spin down
+        % Wait for motor to spin down
         calllib(libHandle, 'setMotorCurrent', devId, 0);
-        lastAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
+        % ZZZ Do something about the NaN return values below
+        i = 20;
+        while( i )
+            lastAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
+            if( ~isnan( lastAngle ))
+                i = i - 1;
+            else
+                i = 0;
+            end
+        end
         
         pause(.200);
-        currentAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
+        i = 20;
+        while( i )
+            currentAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
+            if( ~isnan(ccurrentAngle) )
+                i = i -1;
+            else
+                i = 0;
+            end
+        end
         
         while( abs(currentAngle - lastAngle) > 100)
-            lastAngle = currentAngle;
-            currentAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
+            temp = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
+            if( ~isnan( temp ))
+                lastAngle = currentAngle;
+                currentAngle = temp;
+            end
         end
     end
     calllib(libHandle, 'setControlMode', devId, CTRL_NONE );

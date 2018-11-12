@@ -63,13 +63,13 @@ VarEncAngle = [ FX_RIGID_ENC_ANG ];
             % point. So only retrieve that from the devices
             initialAngle1 = readDeviceVar( libHandle, deviceIds(1), FX_RIGID_ENC_ANG);
             initialAngle2 = readDeviceVar( libHandle, deviceIds(2), FX_RIGID_ENC_ANG);
-            if( (initialAngle1 ~= -1) && (initialAngle2 ~= -1) )
+            if( isnan( initialAngle1 ) && isnan( initialAngle2 ) )
                 timeoutCount = 0;
             end
         end
         
         % If we got the initial angles, proceed
-        if( (initialAngle1 ~= -1) && (initialAngle2 ~= -1) )
+        if( ~isnan( initialAngle1 ) && ~isnan( initialAngle2 )
             fprintf("Turning on position control for device %d to follow %d\n", deviceIds(1), deviceIds(2));
             % set first device to current controller with 0 current (0 torque)
             calllib(libHandle, 'setControlMode', deviceIds(1), CTRL_CURRENT);
@@ -86,17 +86,19 @@ VarEncAngle = [ FX_RIGID_ENC_ANG ];
             while( timeoutCount )
                 pause(.100);
                 angle1 = readDeviceVar( libHandle, deviceIds(1), FX_RIGID_ENC_ANG);
-                diff = angle1 - initialAngle1;
-                calllib(libHandle, 'setPosition', deviceIds(2), initialAngle2 + (3 * diff));
+                if( ~isnan( initialAngle1 ) )
+                    diff = angle1 - initialAngle1;
+                    calllib(libHandle, 'setPosition', deviceIds(2), initialAngle2 + (3 * diff));
                 
-                % Now, for each device get ALL of the values and display them
-                clc;
-                fprintf("Device %d following device %d  (%d)\n", deviceIds(1), deviceIds(2), timeoutCount);
-                fprintf("Streaming data from device %d\n", deviceIds(1) );
-                printDevice( libHandle, deviceIds(1), varsToStream, labels, 9)
-                fprintf("Streaming data from device %d\n", deviceIds(2) );
-                printDevice( libHandle, deviceIds(2), varsToStream, labels, 9)
-                timeoutCount = timeoutCount -1;
+                    % Now, for each device get ALL of the values and display them
+                    clc;
+                    fprintf("Device %d following device %d  (%d)\n", deviceIds(1), deviceIds(2), timeoutCount);
+                    fprintf("Streaming data from device %d\n", deviceIds(1) );
+                    printDevice( libHandle, deviceIds(1), varsToStream, labels, 9)
+                    fprintf("Streaming data from device %d\n", deviceIds(2) );
+                    printDevice( libHandle, deviceIds(2), varsToStream, labels, 9)
+                    timeoutCount = timeoutCount -1;
+                end
             end
         end
     end

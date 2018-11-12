@@ -14,6 +14,6 @@ function data = readDeviceVar( libHandle, devId, var )
     if( success(1) ~= -1)
         data = ptrindex.value(1);
     else
-        data = -1;
+        data = NaN;
     end
 end

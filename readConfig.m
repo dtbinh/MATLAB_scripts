@@ -10,7 +10,6 @@ i = 1;
 while ischar(tline)
     cell_array = strsplit(tline);
     ports{index} = cell_array{i};
-    %fprintf("zzz found port %s\n", cell_array{i});
     index = index + 1;
     tline = fgetl(fileID);
 end

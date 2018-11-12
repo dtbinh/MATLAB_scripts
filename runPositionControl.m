@@ -62,7 +62,7 @@ varsToStream = [ 							...
         % Determine the devices initial angle
         timeoutCount = 100;
         initialAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
-        while( timeoutCount && initialAngle == -1)
+        while( timeoutCount && isnan( initialAngle ) )
             pause(.100);
             initialAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
             timeoutCount = timeoutCount -1;
