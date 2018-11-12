@@ -54,37 +54,22 @@ VarEncAngle = [ FX_RIGID_ENC_ANG ];
     if( ~(retCode1 &&  retCode2) )
         fprintf("Couldn't start streaming...\n");
     else
-        timeoutCount = 20;
+        timeoutCount = 10;
         while ( timeoutCount )
-            pause(1);
+            pause(.500);
             
             % Get the initial positions of the two devices
             % Note: We are only interested in the Encoder Angle at this
             % point. So only retrieve that from the devices
-            [ ptr, retData, success1] = calllib(libHandle, 'fxReadDevice', deviceIds(1), VarEncAngle, success1, 1);
-            ptrindex1 = libpointer('int32Ptr', zeros(1:10, 'int32'));
-            ptrindex1 = ptr;
-            setdatatype(ptrindex1, 'int32Ptr', 1, 10);
-            if( success1(1) ~= -1 )
-                initialAngle1 = ptrindex1.value( 1 );
-            end
-
-            
-            [ ptr, retData, success2] = calllib(libHandle, 'fxReadDevice', deviceIds(2), VarEncAngle, success2, 1);
-            ptrindex2 = libpointer('int32Ptr', zeros(1:10, 'int32'));
-            ptrindex2 = ptr;
-            setdatatype(ptrindex2, 'int32Ptr', 1, 10);
-            if( success2(1) ~= -1 ) 
-                initialAngle2 = ptrindex2.value( 1 );
-            end
-        
-            if( (success1(1) ~= -1) && (success2(1) ~= -1) )
+            initialAngle1 = readDeviceVar( libHandle, deviceIds(1), FX_RIGID_ENC_ANG);
+            initialAngle2 = readDeviceVar( libHandle, deviceIds(2), FX_RIGID_ENC_ANG);
+            if( (initialAngle1 ~= -1) && (initialAngle2 ~= -1) )
                 timeoutCount = 0;
             end
         end
         
         % If we got the initial angles, proceed
-        if( (success1(1) ~= -1) && (success2(1) ~= -1) )
+        if( (initialAngle1 ~= -1) && (initialAngle2 ~= -1) )
             fprintf("Turning on position control for device %d to follow %d\n", deviceIds(1), deviceIds(2));
             % set first device to current controller with 0 current (0 torque)
             calllib(libHandle, 'setControlMode', deviceIds(1), CTRL_CURRENT);
@@ -99,13 +84,10 @@ VarEncAngle = [ FX_RIGID_ENC_ANG ];
 
             timeoutCount = 30;
             while( timeoutCount )
-                pause(1);
-                [ ptr, retData, success1] = calllib(libHandle, 'fxReadDevice', deviceIds(1), VarEncAngle, success1, 1);
-                if( success1(1) ~= -1 )
-                    angle1 = ptrindex1.value( 1 );
-                    diff = angle1 - initialAngle1;
-                    calllib(libHandle, 'setPosition', deviceIds(2), initialAngle2 + (3 * diff));
-                end
+                pause(.100);
+                angle1 = readDeviceVar( libHandle, deviceIds(1), FX_RIGID_ENC_ANG);
+                diff = angle1 - initialAngle1;
+                calllib(libHandle, 'setPosition', deviceIds(2), initialAngle2 + (3 * diff));
                 
                 % Now, for each device get ALL of the values and display them
                 clc;
@@ -120,11 +102,10 @@ VarEncAngle = [ FX_RIGID_ENC_ANG ];
     end
     
     % Clean up
-    pause(1);
     fprintf("Turning off position control\n");
     calllib(libHandle, 'setControlMode', deviceIds(1), CTRL_NONE);
     calllib(libHandle, 'setControlMode', deviceIds(2), CTRL_NONE);
-    pause(1);
+    pause(.200);
     calllib(libHandle, 'fxStopStreaming', deviceIds(1));
     calllib(libHandle, 'fxStopStreaming', deviceIds(2));
 end
