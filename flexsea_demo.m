@@ -28,6 +28,8 @@ else
             runReadOnly( 'libfx_plan_stack', deviceIds( 1 ) );
         case 1
             runOpenControl( 'libfx_plan_stack', deviceIds( 1 ) );
+        case 2
+            runCurrentControl( 'libfx_plan_stack', deviceIds( 1 ) );
         case 6
             RunLeaderFollower( 'libfx_plan_stack', deviceIds );
         otherwise
