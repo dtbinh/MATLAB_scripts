@@ -30,6 +30,10 @@ else
             runOpenControl( 'libfx_plan_stack', deviceIds( 1 ) );
         case 2
             runCurrentControl( 'libfx_plan_stack', deviceIds( 1 ) );
+        case 3
+            runPositionControl( 'libfx_plan_stack', deviceIds( 1 ) );
+        case 4
+            runFindPoles( 'libfx_plan_stack', deviceIds(1));
         case 6
             RunLeaderFollower( 'libfx_plan_stack', deviceIds );
         otherwise
@@ -123,6 +127,9 @@ function [ retCode, deviceIds] = loadAndGetDevice( ports )
     end
 end
 
+function runFindPoles( libHandle, devId)
+    calllib('libfx_plan_stack', 'findPoles', devId, true);
+end
 %function shouldQuit = signalHander( ShouldQuit )
 %    disp("ZZZ CTRL-C Caught\n");
 %    shouldQuit = true;
