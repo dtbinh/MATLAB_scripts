@@ -26,6 +26,8 @@ else
     switch test
         case 0
             runReadOnly( 'libfx_plan_stack', deviceIds( 1 ) );
+        case 1
+            runOpenControl( 'libfx_plan_stack', deviceIds( 1 ) );
         case 6
             RunLeaderFollower( 'libfx_plan_stack', deviceIds );
         otherwise
@@ -54,7 +56,7 @@ function test = displayMenu()
 
     clc;
     disp( "0) Read only");
-    disp( "1) Open speed");
+    disp( "1) Open control");
     disp( "2) Current Control");
     disp( "3) Hold Position");
     disp( "4) Find Poles");
