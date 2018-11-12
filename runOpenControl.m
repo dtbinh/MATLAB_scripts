@@ -1,5 +1,6 @@
 function runOpenControl( libHandle, devId );
-disp('Read Only test');
+% Run the Open Control demo
+disp('Open Control test');
     
 % Motor & Control commands:
 CTRL_NONE = 0;
@@ -15,7 +16,8 @@ FX_RIGID_GYROY  = 7;
 FX_RIGID_GYROZ  = 8;
 FX_RIGID_ENC_ANG = 9;
 FX_RIGID_MOT_VOLT = 13;
-    labels = {  'State time', 	    ...
+
+labels = {  'State time', 	    ...
                 'accel x', 	'accel y', 	'accel z', 	...
                 'gyro x', 	'gyro y',	'gyro z', 	...
                 'encoder angle', 	...
@@ -32,7 +34,7 @@ varsToStream = [ 		...
 
     outVars = [ 99, 99, 99, 99, 99, 99, 99, 99, 99];
     
-        % Select the variables to stream
+    % Select the variables to stream
     [retCode, outVars ] = calllib(libHandle, 'fxSetStreamVariables', devId,  varsToStream, 9 );
     
     % Start streaming
@@ -70,6 +72,6 @@ varsToStream = [ 		...
         end
     end
     calllib(libHandle, 'setControlMode', devId, CTRL_NONE);
-    pause(1);
+    pause(.200);
     calllib(libHandle, 'fxStopStreaming', devId);
 end
