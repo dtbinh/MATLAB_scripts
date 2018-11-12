@@ -64,7 +64,7 @@ varsToStream = [ 		...
 
         for count = 1:10
             pause(1);
-            %zzzclc;
+            clc;
             fprintf("Streaming data from device %d\n", deviceId );
             printDevice( libHandle, deviceId, varsToStream, labels, 10);
         end
