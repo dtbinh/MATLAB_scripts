@@ -44,7 +44,7 @@ varsToStream = [ 		...
             timeoutCount = timeoutCount - 1;
         end
         
-        fprintf('Turning off current control mode...')
+        fprintf('Ramping down the current...\n')
         % Ramp down the holding current
         n = 50;
         for i=1:50
@@ -54,7 +54,6 @@ varsToStream = [ 		...
         
         % Wait for motor to spin down
         calllib(libHandle, 'setMotorCurrent', devId, 0);
-        % ZZZ Do something about the NaN return values below
         i = 20;
         while( i )
             lastAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
@@ -69,7 +68,7 @@ varsToStream = [ 		...
         i = 20;
         while( i )
             currentAngle = readDeviceVar( libHandle, devId, FX_RIGID_ENC_ANG);
-            if( ~isnan(ccurrentAngle) )
+            if( ~isnan(currentAngle) )
                 i = i -1;
             else
                 i = 0;
