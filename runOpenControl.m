@@ -25,11 +25,11 @@ labels = {  'State time', 	    ...
 };
 
 varsToStream = [ 		...
-	FX_RIGID_STATETIME, 		...
-    FX_RIGID_ACCELX,	FX_RIGID_ACCELY,	FX_RIGID_ACCELZ, 	...
-    FX_RIGID_GYROX,  	FX_RIGID_GYROY,  	FX_RIGID_GYROZ,	...
-	FX_RIGID_ENC_ANG,		...
-	FX_RIGID_MOT_VOLT		...
+        FX_RIGID_STATETIME, 		...
+        FX_RIGID_ACCELX,	FX_RIGID_ACCELY,	FX_RIGID_ACCELZ, 	...
+        FX_RIGID_GYROX,  	FX_RIGID_GYROY,  	FX_RIGID_GYROZ,	...
+        FX_RIGID_ENC_ANG,		...
+        FX_RIGID_MOT_VOLT		...
 ];
 
     outVars = [ 99, 99, 99, 99, 99, 99, 99, 99, 99];
@@ -44,25 +44,27 @@ varsToStream = [ 		...
     else
         calllib(libHandle, 'setControlMode', devId, CTRL_OPEN);
         
-        numSteps = 100;
+        numSteps = 50;
+        minVoltage = 1000;
         maxVoltage = 3000;
+        varVoltage = maxVoltage - minVoltage;
         numTimes = 2;
 
-        tDelay = .200;
+        tDelay = .300;
         for time = 1: numTimes
             for i = 1: numSteps
                 pause( tDelay );
-                mV = maxVoltage * (i*1.0 /numSteps);
+                mV = minVoltage + varVoltage * ((i*1.0) /numSteps);
                 calllib(libHandle, 'setMotorVoltage', devId, mV);
                 clc;
-                fprintf('Open Control demo...\n');
-                fprintf("Ramping up controller...\n");
+                fprintf('Open Control demo...\n', devId );
+                fprintf("Ramping up controller...\n", mV );
                 printDevice( libHandle, devId, varsToStream, labels, 9);
             end
             
             for i = 1: numSteps
                 pause( tDelay );
-                mV = maxVoltage * ((numSteps - i)*1.0 / numSteps);
+                mV = minVoltage + varVoltage * (((numSteps -i)*1.0) /numSteps);
                 calllib(libHandle, 'setMotorVoltage', devId, mV);
                 clc;
                 fprintf('Open Control demo...\n');
@@ -71,6 +73,8 @@ varsToStream = [ 		...
             end
         end
     end
+    calllib(libHandle, 'setMotorVoltage', devId, 0);
+    pause(.200);
     calllib(libHandle, 'setControlMode', devId, CTRL_NONE);
     pause(.200);
     calllib(libHandle, 'fxStopStreaming', devId);
