@@ -35,13 +35,13 @@ varsToStream = [ 		...
         calllib(libHandle, 'setZGains', devId, 100, 20, 0, 0 );
         calllib(libHandle, 'setMotorCurrent', devId, holdCurrent );
         
-        timeoutCount = 50;
-        while( timeoutCount )
+        loopCount = 50;
+        while( loopCount )
             pause(.200);
             clc;
             fprintf("Holding current %d\n", holdCurrent);
             printDevice(libHandle, devId, varsToStream, labels, 3);
-            timeoutCount = timeoutCount - 1;
+            loopCount = loopCount - 1;
         end
         
         fprintf('Ramping down the current...\n')

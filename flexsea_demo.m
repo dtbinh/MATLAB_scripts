@@ -101,11 +101,11 @@ function [ retCode, deviceIds] = loadAndGetDevice( ports )
                 % Now open the COM port
                 fprintf("Opening port %s\n", ports{i});
                 calllib('libfx_plan_stack', 'fxOpen', ports{i}, i);
-                pause(1);
+                pause(.200);
                 retCode = false;
                 iterCount = 10;
                 while ~retCode && iterCount > 0
-                    pause(1);
+                    pause(.200);
                     retCode = calllib('libfx_plan_stack', 'fxIsOpen', i);
                     if( ~retCode )
                         fprintf("Could not open port %s\n", ports{i});

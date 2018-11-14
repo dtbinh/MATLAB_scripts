@@ -44,10 +44,10 @@ varsToStream = [                ...
         fprintf("Couldn't start streaming...\n");
     else
 
-        for count = 1:10
-            pause(1);
+        for loopCount = 50:-1:0
+            pause(.500);
             clc;
-            fprintf("Streaming data from device %d\n", deviceId );
+            fprintf("Streaming data from device %d (%d)\n", deviceId, loopCount );
             printDevice( libHandle, deviceId, varsToStream, labels, 10);
         end
     end
